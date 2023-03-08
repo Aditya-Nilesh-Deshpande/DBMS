@@ -1,0 +1,174 @@
+MariaDB [te31416db]> create table employee (Emp_id int primary key , Dept_id int , Fname varchar (20) , Iname varchar (20) , Designation varchar (20) , salary int , Joindate date );
+
+MariaDB [te31416db]> create table dept (Dept_id int , D_name varchar (20) , D_location varchar (20) foriegn key (Dept_id) refernces employee (Dept_id) on delete cascade );
+
+MariaDB [te31416db]> create table project (Dept_id int , Proj_id int , P_name varchar (20) , P_Loctation varcahr (20) , P_cost int , P_year int foriegn key (Dept_id) refernces employee (Dept_id) on delete cascade );
+
+MariaDB [te31416db]> create view view1 as (select Emp_id , Fname , Designation from employee where Emp_id = 345 ;
+
+MariaDB [te31416db]> select * from view1;
++--------+-------+-------------+
+| Emp_id | Fname | Designation |
++--------+-------+-------------+
+|    345 | Tejas | MD          |
++--------+-------+-------------+
+
+MariaDB [te31416db]> create unique index index1 on employee (Emp_id);
+
+MariaDB [te31416db]> alter table employee modify Emp_id int primary key auto_increment ;
+
+MariaDB [te31416db]> insert into employee values (246,606,'Swapnil','SJ','BTECH',20000,19940505),(256,707,'Rohan','RM','BE',30000,18950412),(276,808,'Tanishq','TM','MTECH',50000,19990101),(489,909,'RAJ','RA','CSE',20170202),(999,111,'Makarand','MJ','MCOM',60000,20200909),(489,909,'RAJ','RA','CSE',9000,20170202),(999,111,'Makarand','MJ','MCOM',60000,20200909);
+
+MariaDB [te31416db]> select * from employee;
++--------+---------+----------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname    | Iname | Designation | salary | Joindate   |
++--------+---------+----------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan   | CM    | BE          | 200000 | 2002-12-12 |
+|    999 |     111 | Makarand | MJ    | MCOM        |  60000 | 2020-09-09 |
+|    234 |     202 | Yash     | YM    | MBBS        | 400000 | 1996-06-02 |
+|    345 |     303 | Tejas    | TG    | MD          | 100000 | 1999-01-01 |
+|    456 |     404 | OM       | OD    | LLB         | 120350 | 1959-05-21 |
+|    456 |     505 | OMIEE    | OG    | LAW         | 128364 | 1969-09-11 |
+|    246 |     606 | Swapnil  | SJ    | BTECH       |  20000 | 1994-05-05 |
+|    256 |     707 | Rohan    | RM    | BE          |  30000 | 1895-04-12 |
+|    276 |     808 | Tanishq  | TM    | MTECH       |  50000 | 1999-01-01 |
+|    489 |     909 | RAJ      | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+----------+-------+-------------+--------+------------+
+
+MariaDB [te31416db]> select * from employee where (dept_id in (404,909) and (Fname like 'P%' or Fname like 'H%'));
++--------+---------+--------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname  | Iname | Designation | salary | Joindate   |
++--------+---------+--------+-------+-------------+--------+------------+
+|    456 |     404 | Hritik | OD    | LLB         | 132385 | 1959-05-21 |
+|    489 |     909 | Pratik | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+--------+-------+-------------+--------+------------+
+
+MariaDB [te31416db]> select distinct (Designation) from employee;
++-------------+
+| Designation |
++-------------+
+| BE          |
+| MCOM        |
+| MBBS        |
+| MD          |
+| LLB         |
+| LAW         |
+| BTECH       |
+| MTECH       |
+| CSE         |
++-------------+
+
+MariaDB [te31416db]> update employee set salary = salary + (salary * 10/100) where joindate < 20150101 ;
+MariaDB [te31416db]> select * from employee;
++--------+---------+----------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname    | Iname | Designation | salary | Joindate   |
++--------+---------+----------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan   | CM    | BE          | 220000 | 2002-12-12 |
+|    999 |     111 | Makarand | MJ    | MCOM        |  60000 | 2020-09-09 |
+|    234 |     202 | Yash     | YM    | MBBS        | 440000 | 1996-06-02 |
+|    345 |     303 | Tejas    | TG    | MD          | 110000 | 1999-01-01 |
+|    456 |     404 | OM       | OD    | LLB         | 132385 | 1959-05-21 |
+|    456 |     505 | OMIEE    | OG    | LAW         | 141200 | 1969-09-11 |
+|    246 |     606 | Swapnil  | SJ    | BTECH       |  22000 | 1994-05-05 |
+|    256 |     707 | Rohan    | RM    | BE          |  33000 | 1895-04-12 |
+|    276 |     808 | Tanishq  | TM    | MTECH       |  55000 | 1999-01-01 |
+|    489 |     909 | RAJ      | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+----------+-------+-------------+--------+------------+
+
+MariaDB [te31416db]> select * from dept;
++---------+--------+------------+
+| Dept_id | D_name | D_location |
++---------+--------+------------+
+|     101 | CE     | A404       |
+|     111 | IT     | MUMBAI     |
+|     202 | ENTC   | B505       |
+|     303 | IT     | MUMBAI     |
+|     404 | CE     | A405       |
+|     505 | IT     | B506       |
+|     606 | CE     | MUMBAI     |
+|     707 | ENTC   | C909       |
+|     808 | CE     | D505       |
+|     909 | CE     | A405       |
++---------+--------+------------+
+
+MariaDB [te31416db]> delete from dept where D_location = 'MUMBAI';
+Query OK, 3 rows affected (0.066 sec)
+
+MariaDB [te31416db]> select * from dept;
++---------+--------+------------+
+| Dept_id | D_name | D_location |
++---------+--------+------------+
+|     101 | CE     | A404       |
+|     202 | ENTC   | B505       |
+|     404 | CE     | A405       |
+|     505 | IT     | B506       |
+|     707 | ENTC   | C909       |
+|     808 | CE     | D505       |
+|     909 | CE     | A405       |
++---------+--------+------------+
+
+MariaDB [te31416db]> select * from project;
++---------+---------+--------+-------------+--------+--------+
+| Dept_id | Proj_id | P_name | P_Loctation | P_cost | P_year |
++---------+---------+--------+-------------+--------+--------+
+|     101 |     987 | ABS    | NASHIK      |  10000 |   2000 |
+|     202 |     876 | EBD    | PUNE        |   5000 |  10000 |
+|     303 |     765 | ESP    | MUMBAI      |  20000 |   5000 |
+|     404 |     467 | HHC    | PUNE        | 150000 |   2020 |
+|     505 |     365 | BA     | NASHIK      | 300000 |   2019 |
++---------+---------+--------+-------------+--------+--------+
+
+MariaDB [te31416db]> select * from project where P_Loctation = 'PUNE';
++---------+---------+--------+-------------+--------+--------+
+| Dept_id | Proj_id | P_name | P_Loctation | P_cost | P_year |
++---------+---------+--------+-------------+--------+--------+
+|     202 |     876 | EBD    | PUNE        |   5000 |  10000 |
+|     404 |     467 | HHC    | PUNE        | 150000 |   2020 |
++---------+---------+--------+-------------+--------+--------+
+
+MariaDB [te31416db]> select * from project  where  P_cost <500000 and P_cost >100000;
++---------+---------+--------+-------------+--------+--------+
+| Dept_id | Proj_id | P_name | P_Loctation | P_cost | P_year |
++---------+---------+--------+-------------+--------+--------+
+|     505 |     365 | BA     | NASHIK      | 300000 |   2019 |
++---------+---------+--------+-------------+--------+--------+
+
+MariaDB [te31416db]> select max(P_cost) from project;
++-------------+
+| max(P_cost) |
++-------------+
+|      300000 |
++-------------+
+
+MariaDB [te31416db]> select avg(P_cost) from project;
++-------------+
+| avg(P_cost) |
++-------------+
+| 110000.0000 |
++-------------+
+
+MariaDB [te31416db]> select Emp_id , Fname from employee order by Emp_id desc;
++--------+----------+
+| Emp_id | Fname    |
++--------+----------+
+|    999 | Makarand |
+|    489 | Pratik   |
+|    456 | Omkar    |
+|    456 | Hritik   |
+|    345 | Tejas    |
+|    276 | Tanishq  |
+|    256 | Rohan    |
+|    246 | Swapnil  |
+|    234 | Yash     |
+|    123 | Chetan   |
++--------+----------+
+
+MariaDB [te31416db]> select P_name,P_Loctation ,P_cost from project where P_year = 2004 or P_year = 2005 or P_year = 2007;
++--------+-------------+--------+
+| P_name | P_Loctation | P_cost |
++--------+-------------+--------+
+| HHC    | BANGLORE    |  15000 |
+| RAC    | HYDRABAD    |  25000 |
+| TCS    | KOLKATA     |  45706 |
++--------+-------------+--------+
+

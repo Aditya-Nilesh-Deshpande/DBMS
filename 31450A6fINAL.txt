@@ -1,0 +1,69 @@
+MariaDB [te31450db]> select * from New_Employee;
++--------+---------+--------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname  | Iname | Desgination | salary | Joindate   |
++--------+---------+--------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan | CM    | BE          | 220000 | 2002-12-12 |
+|    243 |     202 | Yash   | YM    | MBBS        | 440000 | 1996-06-02 |
+|    345 |     303 | Tejas  | TG    | MD          | 110000 | 1999-01-01 |
++--------+---------+--------+-------+-------------+--------+------------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from employee;
++--------+---------+----------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname    | Iname | Designation | salary | Joindate   |
++--------+---------+----------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan   | CM    | BE          | 220000 | 2002-12-12 |
+|    999 |     111 | Makarand | MJ    | MCOM        |  60000 | 2020-09-09 |
+|    234 |     202 | Yash     | YM    | MBBS        | 440000 | 1996-06-02 |
+|    345 |     303 | Tejas    | TG    | MD          | 110000 | 1999-01-01 |
+|    456 |     404 | Hritik   | OD    | LLB         | 132385 | 1959-05-21 |
+|    999 |     505 | Omkar    | OG    | LAW         | 141200 | 1969-09-11 |
+|    246 |     606 | Swapnil  | SJ    | BTECH       |  22000 | 1994-05-05 |
+|    256 |     707 | Rohan    | RM    | BE          |  33000 | 1895-04-12 |
+|    276 |     808 | Tanishq  | TM    | MTECH       |  55000 | 1999-01-01 |
+|    489 |     909 | Pratik   | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+----------+-------+-------------+--------+------------+
+10 rows in set (0.002 sec)
+
+MariaDB [te31450db]> delimiter ??
+MariaDB [te31450db]> create procedure merge()
+    -> begin
+    -> declare id int;
+    -> declare var1 int;
+    -> declare c1 cursor for select Emp_id from employee;
+    -> declare continue handler for not found set var1 = 1;
+    -> open c1;
+    -> loop1:LOOP
+    -> fetch c1 into id;
+    -> if not exists(select * from New_Employee where Emp_id=id) then
+    -> insert into New_Employee select * from employee where Emp_id=id;
+    -> end if;
+    -> if var1 = 1 then
+    -> close c1;
+    -> leave loop1;
+    -> end if;
+    -> end LOOP loop1;
+    -> end ??
+Query OK, 0 rows affected (0.063 sec)
+
+MariaDB [te31450db]> Delimiter ;
+
+MariaDB [te31450db]> call merge();
+Query OK, 7 rows affected (0.331 sec)
+
+MariaDB [te31450db]> select * from New_Employee;
++--------+---------+----------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname    | Iname | Designation | salary | Joindate   |
++--------+---------+----------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan   | CM    | BE          | 220000 | 2002-12-12 |
+|    999 |     111 | Makarand | MJ    | MCOM        |  60000 | 2020-09-09 |
+|    234 |     202 | Yash     | YM    | MBBS        | 440000 | 1996-06-02 |
+|    345 |     303 | Tejas    | TG    | MD          | 110000 | 1999-01-01 |
+|    456 |     404 | Hritik   | OD    | LLB         | 132385 | 1959-05-21 |
+|    999 |     505 | Omkar    | OG    | LAW         | 141200 | 1969-09-11 |
+|    246 |     606 | Swapnil  | SJ    | BTECH       |  22000 | 1994-05-05 |
+|    256 |     707 | Rohan    | RM    | BE          |  33000 | 1895-04-12 |
+|    276 |     808 | Tanishq  | TM    | MTECH       |  55000 | 1999-01-01 |
+|    489 |     909 | Pratik   | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+----------+-------+-------------+--------+------------+
+10 rows in set (0.002 sec)

@@ -1,0 +1,203 @@
+MariaDB [te31450db]> create table library (B_id int , Name varchar(20),Author 
+varchar(20),Status varchar(20));
+Query OK, 0 rows affected (0.062 sec)
+
+MariaDB [te31450db]> create table library_audit (B_id int , Name varchar(20),Author 
+varchar(20),Status varchar(20),Ts timestamp);
+Query OK, 0 rows affected (0.069 sec)
+
+MariaDB [te31450db]> create table fine1 (B_id int , Fineamt varchar(20));
+Query OK, 0 rows affected (0.045 sec)
+
+MariaDB [te31450db]> desc library;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| B_id   | int(11)     | YES  |     | NULL    |       |
+| Name   | varchar(20) | YES  |     | NULL    |       |
+| Author | varchar(20) | YES  |     | NULL    |       |
+| Status | varchar(20) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+4 rows in set (0.003 sec)
+
+MariaDB [te31450db]> desc library_audit;
++--------+-------------+------+-----+---------------------+-------------------------------+
+| Field  | Type        | Null | Key | Default             | Extra                         |
++--------+-------------+------+-----+---------------------+-------------------------------+
+| B_id   | int(11)     | YES  |     | NULL                |                               |
+| Name   | varchar(20) | YES  |     | NULL                |                               |
+| Author | varchar(20) | YES  |     | NULL                |                               |
+| Status | varchar(20) | YES  |     | NULL                |                               |
+| Ts     | timestamp   | NO   |     | current_timestamp() | on update current_timestamp() |
++--------+-------------+------+-----+---------------------+-------------------------------+
+5 rows in set (0.003 sec)
+
+MariaDB [te31450db]> delimiter ??
+MariaDB [te31450db]> create trigger before_library_insert before insert on library for each row 
+    -> begin
+    -> insert into fine1 values (new.B_id , NULL);
+    -> end ??
+Query OK, 0 rows affected (0.118 sec)
+
+MariaDB [te31450db]> create trigger before_library_update before update on library for each row 
+    -> begin 
+    -> update fine1 set Fineamt = '200' where B_id=New.B_id;
+    -> end ??
+Query OK, 0 rows affected (0.070 sec)
+
+MariaDB [te31450db]> create trigger after_library_update after update on library for each row 
+    -> begin
+    -> insert into library_audit values (old.B_id,old.Name,old.Author,old.Status,now());
+    -> end ??
+Query OK, 0 rows affected (0.071 sec)
+
+MariaDB [te31450db]> create trigger before_library_delete before delete on library for each row
+    ->begin delete from fine1  where b_id=old.b_id;
+    -> end??
+Query OK, 0 rows affected (0.051 sec)
+
+MariaDB [te31450db]> create trigger after_library_delete after delete on library for each row 
+    -> begin 
+    -> insert into library_audit values(old.B_id, old.Name, old.Author, old.Status, now());
+    -> end ??
+Query OK, 0 rows affected (0.052 sec)
+
+MariaDB [te31450db]> insert into library values(8605,'X340I','Chetan','A')??
+Query OK, 1 row affected (0.042 sec)
+
+MariaDB [te31450db]> insert into library values(9271,'X530d','Yash','A')??
+Query OK, 1 row affected (0.035 sec)
+
+MariaDB [te31450db]> select * from fine1??
++------+---------+
+| B_id | Fineamt |
++------+---------+
+| 8605 | 0       |
+| 9271 | 0       |
++------+---------+
+2 rows in set (0.001 sec)
+
+MariaDB [te31450db]> delimiter ;
+MariaDB [te31450db]> update library set Status='I' where b_id = 9271;
+Query OK, 1 row affected (0.030 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [te31450db]> select * from fine1??
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '??' at line 1
+MariaDB [te31450db]> select * from fine1;
++------+---------+
+| B_id | Fineamt |
++------+---------+
+| 8605 | 0       |
+| 9271 | 200     |
++------+---------+
+2 rows in set (0.001 sec)
+
+MariaDB [te31450db]> select * from library_audit;
++------+-------+--------+--------+---------------------+
+| B_id | Name  | Author | Status | Ts                  |
++------+-------+--------+--------+---------------------+
+| 9271 | X530d | Yash   | A      | 2022-09-21 15:09:02 |
++------+-------+--------+--------+---------------------+
+1 row in set (0.002 sec)
+
+MariaDB [te31450db]> select * from library;
++------+---------+--------+--------+
+| B_id | Name    | Author | Status |
++------+---------+--------+--------+
+|  123 | A335TDI | Chetan | A      |
+| 8605 | X340I   | Chetan | A      |
+| 9271 | X530d   | Yash   | I      |
++------+---------+--------+--------+
+3 rows in set (0.001 sec)
+
+MariaDB [te31450db]> update library set Status='I' where b_id = 8605;
+Query OK, 1 row affected (0.033 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [te31450db]> select * from library;
++------+---------+--------+--------+
+| B_id | Name    | Author | Status |
++------+---------+--------+--------+
+|  123 | A335TDI | Chetan | A      |
+| 8605 | X340I   | Chetan | I      |
+| 9271 | X530d   | Yash   | I      |
++------+---------+--------+--------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from library_audit;
++------+-------+--------+--------+---------------------+
+| B_id | Name  | Author | Status | Ts                  |
++------+-------+--------+--------+---------------------+
+| 9271 | X530d | Yash   | A      | 2022-09-21 15:09:02 |
+| 8605 | X340I | Chetan | A      | 2022-09-21 15:11:14 |
++------+-------+--------+--------+---------------------+
+2 rows in set (0.002 sec)
+
+MariaDB [te31450db]> delete from library  where b_id = 9271;
+Query OK, 1 row affected (0.033 sec)
+
+MariaDB [te31450db]> select * from library;
++------+---------+--------+--------+
+| B_id | Name    | Author | Status |
++------+---------+--------+--------+
+|  123 | A335TDI | Chetan | A      |
+| 8605 | X340I   | Chetan | I      |
++------+---------+--------+--------+
+2 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from library_audit;
++------+-------+--------+--------+---------------------+
+| B_id | Name  | Author | Status | Ts                  |
++------+-------+--------+--------+---------------------+
+| 9271 | X530d | Yash   | A      | 2022-09-21 15:09:02 |
+| 8605 | X340I | Chetan | A      | 2022-09-21 15:11:14 |
+| 9271 | X530d | Yash   | I      | 2022-09-21 15:11:49 |
++------+-------+--------+--------+---------------------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from fine1;
++------+---------+
+| B_id | Fineamt |
++------+---------+
+| 8605 | 200     |
++------+---------+
+1 row in set (0.001 sec)
+
+MariaDB [te31450db]> delete from library  where b_id = 123;
+Query OK, 1 row affected (0.038 sec)
+
+MariaDB [te31450db]> select * from library;
++------+-------+--------+--------+
+| B_id | Name  | Author | Status |
++------+-------+--------+--------+
+| 8605 | X340I | Chetan | I      |
++------+-------+--------+--------+
+1 row in set (0.001 sec)
+
+MariaDB [te31450db]> select * from library_audit;
++------+---------+--------+--------+---------------------+
+| B_id | Name    | Author | Status | Ts                  |
++------+---------+--------+--------+---------------------+
+| 9271 | X530d   | Yash   | A      | 2022-09-21 15:09:02 |
+| 8605 | X340I   | Chetan | A      | 2022-09-21 15:11:14 |
+| 9271 | X530d   | Yash   | I      | 2022-09-21 15:11:49 |
+|  123 | A335TDI | Chetan | A      | 2022-09-21 15:14:34 |
++------+---------+--------+--------+---------------------+
+4 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from fine1;
++------+---------+
+| B_id | Fineamt |
++------+---------+
+| 8605 | 200     |
++------+---------+
+1 row in set (0.001 sec)
+
+
+
+
+
+
+

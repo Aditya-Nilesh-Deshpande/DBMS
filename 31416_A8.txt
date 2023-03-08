@@ -1,0 +1,125 @@
+========= MENU =========
+0. Display this menu
+1. Create a table
+2. Insert records into a table
+3. Update records in a table
+4. Fetch all records from a table
+5. Fetch filtered records
+6. Delete records from a table
+7. Delete a table
+8. Exit Program
+
+Enter your choice: 
+0
+
+========= MENU =========
+0. Display this menu
+1. Create a table
+2. Insert records into a table
+3. Update records in a table
+4. Fetch all records from a table
+5. Fetch filtered records
+6. Delete records from a table
+7. Delete a table
+8. Exit Program
+
+Enter your choice: 
+1
+Table Successfully Created!
+
+Enter your choice: 
+2
+The fields of the table are: 
+
+ | class	 | varchar(20)	
+ | name	 | varchar(20)	
+ | roll	 | int(11)	
+ | marks	 | int(11)	
+Enter the number of records to insert: 
+2
+Enter fields of record 1 in order seperated by space: 
+BE pranav 41456 69
+Enter fields of record 2 in order seperated by space: 
+SE meera 22222 86
+
+Enter your choice: 
+4
+
+ | TE	 | aditya	 | 31454	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+ | SE	 | bhakti	 | 21254	 | 100	
+ | BE	 | pranav	 | 41456	 | 69	
+ | SE	 | meera	 | 22222	 | 86	
+Enter your choice: 
+5
+Enter in order the field you want to filter by and its value: 
+class TE
+
+ | TE	 | aditya	 | 31254	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+Enter your choice: 
+3
+
+ | TE	 | aditya	 | 31254	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+ | SE	 | bhakti	 | 21254	 | 100	
+ | BE	 | pranav	 | 41456	 | 69	
+ | SE	 | meera	 | 22222	 | 86	
+Enter in order the field you want to update, its previous value and its updated value: 
+class BE passout
+Enter roll number of student to update: 
+41456
+
+Enter your choice: 
+4
+
+ | TE	 | aditya	 | 31254	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+ | SE	 | bhakti	 | 21254	 | 100	
+ | passout	 | pranav	 | 41456	 | 69	
+ | SE	 | meera	 | 22222	 | 86	
+Enter your choice: 
+0
+
+========= MENU =========
+0. Display this menu
+1. Create a table
+2. Insert records into a table
+3. Update records in a table
+4. Fetch all records from a table
+5. Fetch filtered records
+6. Delete records from a table
+7. Delete a table
+8. Exit Program
+
+Enter your choice: 
+6
+
+ | TE	 | aditya	 | 31254	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+ | SE	 | bhakti	 | 21254	 | 100	
+ | passout	 | pranav	 | 41456	 | 69	
+ | SE	 | meera	 | 22222	 | 86	
+Enter in order the class and roll number of the record you want to delete: 
+passout 41456
+
+Enter your choice: 
+4
+
+ | TE	 | aditya	 | 31254	 | 80	
+ | TE	 | manas	 | 31253	 | 69	
+ | TE	 | bhakti	 | 31499	 | 99	
+ | SE	 | bhakti	 | 21254	 | 100	
+ | SE	 | meera	 | 22222	 | 86	
+Enter your choice: 
+7
+Table Successfully Deleted!
+
+Enter your choice: 
+8
+Exiting Program...

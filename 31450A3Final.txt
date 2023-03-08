@@ -1,0 +1,266 @@
+MariaDB [te31450db]> select * from employee natural join dept;
++---------+--------+---------+-------+-------------+--------+------------+--------+------------+
+| Dept_id | Emp_id | Fname   | Iname | Designation | salary | Joindate   | D_name | D_location |
++---------+--------+---------+-------+-------------+--------+------------+--------+------------+
+|     101 |    123 | Chetan  | CM    | BE          | 220000 | 2002-12-12 | CE     | A404       |
+|     202 |    234 | Yash    | YM    | MBBS        | 440000 | 1996-06-02 | ENTC   | B505       |
+|     404 |    456 | Hritik  | OD    | LLB         | 132385 | 1959-05-21 | CE     | A405       |
+|     505 |    456 | Omkar   | OG    | LAW         | 141200 | 1969-09-11 | IT     | B506       |
+|     707 |    256 | Rohan   | RM    | BE          |  33000 | 1895-04-12 | ENTC   | C909       |
+|     808 |    276 | Tanishq | TM    | MTECH       |  55000 | 1999-01-01 | CE     | D505       |
+|     909 |    489 | Pratik  | RA    | CSE         |   9000 | 2017-02-02 | CE     | A405       |
++---------+--------+---------+-------+-------------+--------+------------+--------+------------+
+7 rows in set (0.003 sec)
+
+MariaDB [te31450db]> select Fname , Designation , D_location , Joindate from employee natural join dept ;
++---------+-------------+------------+------------+
+| Fname   | Designation | D_location | Joindate   |
++---------+-------------+------------+------------+
+| Chetan  | BE          | A404       | 2002-12-12 |
+| Yash    | MBBS        | B505       | 1996-06-02 |
+| Hritik  | LLB         | A405       | 1959-05-21 |
+| Omkar   | LAW         | B506       | 1969-09-11 |
+| Rohan   | BE          | C909       | 1895-04-12 |
+| Tanishq | MTECH       | D505       | 1999-01-01 |
+| Pratik  | CSE         | A405       | 2017-02-02 |
++---------+-------------+------------+------------+
+7 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from project;
++---------+---------+--------+-------------+--------+--------+
+| Dept_id | Proj_id | P_name | P_Loctation | P_cost | P_year |
++---------+---------+--------+-------------+--------+--------+
+|     101 |     987 | ABS    | NASHIK      |  10000 |   2000 |
+|     303 |     765 | ESP    | MUMBAI      |  20000 |   5000 |
+|     505 |     365 | BA     | NASHIK      | 300000 |   2019 |
+|     202 |     564 | HHC    | BANGLORE    |  15000 |   2004 |
+|     404 |     435 | RAC    | HYDRABAD    |  25000 |   2005 |
+|     606 |     764 | TCS    | KOLKATA     |  45706 |   2007 |
++---------+---------+--------+-------------+--------+--------+
+6 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from employee;
++--------+---------+----------+-------+-------------+--------+------------+
+| Emp_id | Dept_id | Fname    | Iname | Designation | salary | Joindate   |
++--------+---------+----------+-------+-------------+--------+------------+
+|    123 |     101 | Chetan   | CM    | BE          | 220000 | 2002-12-12 |
+|    999 |     111 | Makarand | MJ    | MCOM        |  60000 | 2020-09-09 |
+|    234 |     202 | Yash     | YM    | MBBS        | 440000 | 1996-06-02 |
+|    345 |     303 | Tejas    | TG    | MD          | 110000 | 1999-01-01 |
+|    456 |     404 | Hritik   | OD    | LLB         | 132385 | 1959-05-21 |
+|    456 |     505 | Omkar    | OG    | LAW         | 141200 | 1969-09-11 |
+|    246 |     606 | Swapnil  | SJ    | BTECH       |  22000 | 1994-05-05 |
+|    256 |     707 | Rohan    | RM    | BE          |  33000 | 1895-04-12 |
+|    276 |     808 | Tanishq  | TM    | MTECH       |  55000 | 1999-01-01 |
+|    489 |     909 | Pratik   | RA    | CSE         |   9000 | 2017-02-02 |
++--------+---------+----------+-------+-------------+--------+------------+
+10 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from project;
++---------+---------+--------+-------------+--------+--------+
+| Dept_id | Proj_id | P_name | P_Loctation | P_cost | P_year |
++---------+---------+--------+-------------+--------+--------+
+|     101 |     987 | ABS    | NASHIK      |  10000 |   2000 |
+|     303 |     765 | ESP    | MUMBAI      |  20000 |   5000 |
+|     505 |     365 | BA     | NASHIK      | 300000 |   2019 |
+|     202 |     564 | HHC    | BANGLORE    |  15000 |   2004 |
+|     404 |     435 | RAC    | HYDRABAD    |  25000 |   2005 |
+|     606 |     764 | TCS    | KOLKATA     |  45706 |   2007 |
++---------+---------+--------+-------------+--------+--------+
+6 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select Emp_id,Fname,Iname,Designation,salary,Joindate,Proj_id,P_cost from employee left join project on employee.Dept_id = project.Dept_id where not P_Loctation = 'HYDRABAD' ;
++--------+---------+-------+-------------+--------+------------+---------+--------+
+| Emp_id | Fname   | Iname | Designation | salary | Joindate   | Proj_id | P_cost |
++--------+---------+-------+-------------+--------+------------+---------+--------+
+|    123 | Chetan  | CM    | BE          | 220000 | 2002-12-12 |     987 |  10000 |
+|    345 | Tejas   | TG    | MD          | 110000 | 1999-01-01 |     765 |  20000 |
+|    456 | Omkar   | OG    | LAW         | 141200 | 1969-09-11 |     365 | 300000 |
+|    234 | Yash    | YM    | MBBS        | 440000 | 1996-06-02 |     564 |  15000 |
+|    246 | Swapnil | SJ    | BTECH       |  22000 | 1994-05-05 |     764 |  45706 |
++--------+---------+-------+-------------+--------+------------+---------+--------+
+5 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select Emp_id,employee.Dept_id,Fname,Iname,Designation,salary,Joindate,Proj_id,P_cost from employee left join project on employee.Dept_id = project.Dept_id where not P_Loctation = 'HYDRABAD' ;
++--------+---------+---------+-------+-------------+--------+------------+---------+--------+
+| Emp_id | Dept_id | Fname   | Iname | Designation | salary | Joindate   | Proj_id | P_cost |
++--------+---------+---------+-------+-------------+--------+------------+---------+--------+
+|    123 |     101 | Chetan  | CM    | BE          | 220000 | 2002-12-12 |     987 |  10000 |
+|    345 |     303 | Tejas   | TG    | MD          | 110000 | 1999-01-01 |     765 |  20000 |
+|    456 |     505 | Omkar   | OG    | LAW         | 141200 | 1969-09-11 |     365 | 300000 |
+|    234 |     202 | Yash    | YM    | MBBS        | 440000 | 1996-06-02 |     564 |  15000 |
+|    246 |     606 | Swapnil | SJ    | BTECH       |  22000 | 1994-05-05 |     764 |  45706 |
++--------+---------+---------+-------+-------------+--------+------------+---------+--------+
+5 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select D_name,Fname,Designation from employee inner join dept on employee.Dept_Id=dept.Dept_id inner join project on dept.Dept_id = project.Dept_id ; 
++--------+--------+-------------+
+| D_name | Fname  | Designation |
++--------+--------+-------------+
+| CE     | Chetan | BE          |
+| ENTC   | Yash   | MBBS        |
+| CE     | Hritik | LLB         |
+| IT     | Omkar  | LAW         |
++--------+--------+-------------+
+4 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select D_name,Fname,Designation from employee inner join dept on employee.Dept_Id=dept.Dept_id inner join project on dept.Dept_id = project.Dept_id where P_year = 2020;
++--------+---------+-------------+
+| D_name | Fname   | Designation |
++--------+---------+-------------+
+| ENTC   | Rohan   | BE          |
+| CE     | Tanishq | MTECH       |
++--------+---------+-------------+
+2 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select Designation,employee.Dept_id from employee inner join dept on employee.Dept_Id=dept.Dep
+t_id inner join project on dept.Dept_id = project.Dept_id where P_cost > 30000;
++-------------+---------+
+| Designation | Dept_id |
++-------------+---------+
+| LAW         |     505 |
+| BE          |     707 |
+| MTECH       |     808 |
++-------------+---------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select P_name from project where P_year > 2015;
++----------+
+| P_name   |
++----------+
+| ESP      |
+| BA       |
+| TATA     |
+| MAHINDRA |
++----------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31450db]> select P_name from project where P_year = 2015;
++--------+
+| P_name |
++--------+
+| AUDI   |
++--------+
+1 row in set (0.001 sec)
+
+MariaDB [te31450db]> select Fname from employee inner join project on employee.Dept_Id= project.Dept_id where P_year < 2009 ;
++---------+
+| Fname   |
++---------+
+| Chetan  |
+| Yash    |
+| Hritik  |
+| Swapnil |
++---------+
+4 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select count(Fname) from employee inner join project on employee.Dept_Id= project.Dept_id where P_year < 2009 ;
++--------------+
+| count(Fname) |
++--------------+
+|            4 |
++--------------+
+1 row in set (0.001 sec)
+
+MariaDB [te31450db]> create view view5 as select Emp_id,employee.Dept_id,Fname,Iname,Designation,salary,Joindate,D_name,D_location from employee , dept where employee.Dept_id = dept.Dept_id ;
+Query OK, 0 rows affected (0.031 sec)
+
+MariaDB [te31450db]> select * from view5;
++--------+---------+---------+-------+-------------+--------+------------+--------+------------+
+| Emp_id | Dept_id | Fname   | Iname | Designation | salary | Joindate   | D_name | D_location |
++--------+---------+---------+-------+-------------+--------+------------+--------+------------+
+|    123 |     101 | Chetan  | CM    | BE          | 220000 | 2002-12-12 | CE     | A404       |
+|    234 |     202 | Yash    | YM    | MBBS        | 440000 | 1996-06-02 | ENTC   | B505       |
+|    456 |     404 | Hritik  | OD    | LLB         | 132385 | 1959-05-21 | CE     | A405       |
+|    456 |     505 | Omkar   | OG    | LAW         | 141200 | 1969-09-11 | IT     | B506       |
+|    256 |     707 | Rohan   | RM    | BE          |  33000 | 1895-04-12 | ENTC   | C909       |
+|    276 |     808 | Tanishq | TM    | MTECH       |  55000 | 1999-01-01 | CE     | D505       |
+|    489 |     909 | Pratik  | RA    | CSE         |   9000 | 2017-02-02 | CE     | A405       |
++--------+---------+---------+-------+-------------+--------+------------+--------+------------+
+7 rows in set (0.003 sec)
+
+MariaDB [te31450db]> create view view7 as select D_name , D_location from dept where D_name = 'CE' or D_name = 'IT';
+
+MariaDB [te31450db]> SELECT * FROM view7;
++--------+------------+
+| D_name | D_location |
++--------+------------+
+| CE     | A404       |
+| CE     | A405       |
+| IT     | B506       |
+| IT     | D505       |
+| CE     | A405       |
++--------+------------+
+5 rows in set (0.002 sec)
+
+MariaDB [te31450db]> delete from view7 where D_location = 'D505';
+Query OK, 1 row affected (0.038 sec)
+
+MariaDB [te31450db]> select * FROM view7;
++--------+------------+
+| D_name | D_location |
++--------+------------+
+| CE     | A404       |
+| CE     | A405       |
+| IT     | B506       |
+| CE     | A405       |
++--------+------------+
+4 rows in set (0.002 sec)
+
+MariaDB [te31450db]> insert into view7 values('CE','C606'),('IT','D808');
+MariaDB [te31450db]> select * FROM view7;
++--------+------------+
+| D_name | D_location |
++--------+------------+
+| CE     | A404       |
+| CE     | A405       |
+| IT     | B506       |
+| CE     | C606       |
+| IT     | D808       |
+| CE     | A405       |
++--------+------------+
+
+MariaDB [te31450db]> select *  from employee natural join dept where (dept.D_name = 'CE') > 10;
+Empty set (0.002 sec)
+
+MariaDB [te31450db]> create view view11 as select D_name,Emp_id ,dept.Dept_id from dept inne
+Query OK, 0 rows affected (0.066 sec)
+
+MariaDB [te31450db]> select * from view11;
++--------+--------+---------+
+| D_name | Emp_id | Dept_id |
++--------+--------+---------+
+| CE     |    123 |     101 |
+| ENTC   |    234 |     202 |
+| CE     |    456 |     404 |
+| IT     |    456 |     505 |
+| ENTC   |    256 |     707 |
+| CE     |    489 |     909 |
++--------+--------+---------+
+6 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select D_name,count(Emp_id) as c from view11 group by D_name;
++--------+---+
+| D_name | c |
++--------+---+
+| CE     | 3 |
+| ENTC   | 2 |
+| IT     | 1 |
++--------+---+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> create view view12 as select D_name,count(Emp_id) as c from view11 group by D_name;
+Query OK, 0 rows affected (0.071 sec)
+
+MariaDB [te31450db]> select * from view12;
++--------+---+
+| D_name | c |
++--------+---+
+| CE     | 3 |
+| ENTC   | 2 |
+| IT     | 1 |
++--------+---+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select D_name from view12 where c = 10;
+Empty set (0.002 sec)

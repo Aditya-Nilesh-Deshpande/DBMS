@@ -1,0 +1,176 @@
+MariaDB [te31416db]> create table Student (Name varchar(20),RollNo int , Total_Marks int );
+Query OK, 0 rows affected (0.135 sec)
+MariaDB [te31416db]> create table Result (RollNO int , Name varchar(20) , Class
+varchar(20) ,foreign key (RollNo) references Student (RollNo));
+Query OK, 0 rows affected (0.233 sec)
+MariaDB [te31416db]> desc Student;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Name        | varchar(20) | YES  |     | NULL    |       |
+| RollNo      | int(11)     | NO   | PRI | NULL    |       |
+| Total_Marks | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31416db]> desc Result;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| RollNO | int(11)     | YES  | MUL | NULL    |       |
+| Name   | varchar(20) | YES  |     | NULL    |       |
+| Class  | varchar(20) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31416db]> delimiter ??
+MariaDB [te31416db]> create procedure result ( in marks int , out class varchar(20))
+    -> begin
+    -> if (marks < 1500 && marks > 990) then
+    -> set class = 'Distinction';
+    -> end if;
+    -> if (marks < 989 && marks > 890 ) then
+    -> set class = 'First Class';
+    -> end if;
+    -> if (marks < 889 && marks > 825) then
+    -> set class = 'Higher Secondary Class';
+    -> end if;
+    -> if (marks < 824 && marks > 750) then 
+    -> set class = 'Second Class';
+    -> end if;
+    -> if (marks < 749 && marks > 650) then 
+    -> set class = 'Passed';
+    -> end if;
+    -> if (marks < 649) then 
+    -> set class = 'Fail';
+    -> end if;
+    -> end ??
+Query OK, 0 rows affected (0.060 sec)
+
+MariaDB [te31416db]> delimiter ??
+MariaDB [te31416db]> create function result(R1 int)
+    -> returns int
+    -> begin
+    -> declare fmarks int;
+    -> declare grade varchar(20);
+    -> declare stud_name varchar(20);
+    -> select Student.Total_Marks , Student.Name into fmarks,stud_name from Student where Student.RollNo = R1;
+    -> call result(fmarks , @grade);
+    -> insert into Result values (R1,stud_name,@grade);
+    -> return R1;
+    -> end ??
+Query OK, 0 rows affected (0.114 sec)
+
+MariaDB [te31416db]> insert into Student values ('Chetan',31450,1400),('Tanishq',31448,1000),('Tejas',31451,988),('Rohan',31452,888),('Vipul',31453,823),('Rohit',31449,748),('Abimanyu',31454,648);
+    -> delimiter ;
+    -> ??
+Query OK, 7 rows affected (0.023 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [te31416db]> delimiter ;
+MariaDB [te31416db]> select * from Student;
++----------+--------+-------------+
+| Name     | RollNo | Total_Marks |
++----------+--------+-------------+
+| Tanishq  |  31448 |        1000 |
+| Rohit    |  31449 |         748 |
+| Chetan   |  31450 |        1400 |
+| Tejas    |  31451 |         988 |
+| Rohan    |  31452 |         888 |
+| Vipul    |  31453 |         823 |
+| Abimanyu |  31454 |         648 |
++----------+--------+-------------+
+7 rows in set (0.004 sec)
+
+MariaDB [te31416db]> select result(31448);
++---------------+
+| result(31448) |
++---------------+
+|         31448 |
++---------------+
+1 row in set (0.036 sec)
+
+MariaDB [te31416db]> select result(31449);
++---------------+
+| result(31449) |
++---------------+
+|         31449 |
++---------------+
+1 row in set (0.037 sec)
+
+MariaDB [te31416db]> select result(31450);
++---------------+
+| result(31450) |
++---------------+
+|         31450 |
++---------------+
+1 row in set (0.035 sec)
+
+MariaDB [te31416db]> select result(31451);
++---------------+
+| result(31451) |
++---------------+
+|         31451 |
++---------------+
+1 row in set (0.036 sec)
+
+MariaDB [te31416db]> select * from Result;
++--------+---------+-------------+
+| RollNO | Name    | Class       |
++--------+---------+-------------+
+|  31448 | Tanishq | Distinction |
+|  31449 | Rohit   | Passed      |
+|  31450 | Chetan  | Distinction |
+|  31451 | Tejas   | First Class |
++--------+---------+-------------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31416db]> select result(31453);
++---------------+
+| result(31453) |
++---------------+
+|         31453 |
++---------------+
+1 row in set (0.025 sec)
+
+MariaDB [te31416db]> select (31454);
++-------+
+| 31454 |
++-------+
+| 31454 |
++-------+
+1 row in set (0.001 sec)
+
+MariaDB [te31416db]> select * from Result;
++--------+---------+--------------+
+| RollNO | Name    | Class        |
++--------+---------+--------------+
+|  31448 | Tanishq | Distinction  |
+|  31449 | Rohit   | Passed       |
+|  31450 | Chetan  | Distinction  |
+|  31451 | Tejas   | First Class  |
+|  31453 | Vipul   | Second Class |
++--------+---------+--------------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31416db]> select result(31454);
++---------------+
+| result(31454) |
++---------------+
+|         31454 |
++---------------+
+1 row in set (0.035 sec)
+
+MariaDB [te31416db]> select * from Result;
++--------+----------+--------------+
+| RollNO | Name     | Class        |
++--------+----------+--------------+
+|  31448 | Tanishq  | Distinction  |
+|  31449 | Rohit    | Passed       |
+|  31450 | Chetan   | Distinction  |
+|  31451 | Tejas    | First Class  |
+|  31453 | Vipul    | Second Class |
+|  31454 | Abimanyu | Fail         |
++--------+----------+--------------+
+6 rows in set (0.001 sec)
+

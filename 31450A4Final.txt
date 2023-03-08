@@ -1,0 +1,209 @@
+MariaDB [(none)]> use te31450db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MariaDB [te31450db]> create table borrower (RollNo int , Name varchar (20),DOI date , NameOfBook varchar (20), Status varchar(20));
+Query OK, 0 rows affected (0.180 sec)
+
+MariaDB [te31450db]> create table fine (RollNo int , Date date , Amt int, foreign key(RollNo) references borrower(RollNo));
+Query OK, 0 rows affected (0.178 sec)
+
+MariaDB [te31450db]> desc borrower;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| RollNo     | int(11)     | YES  |     | NULL    |       |
+| Name       | varchar(20) | YES  |     | NULL    |       |
+| DOI        | date        | YES  |     | NULL    |       |
+| NameOfBook | varchar(20) | YES  |     | NULL    |       |
+| Status     | varchar(20) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+5 rows in set (0.003 sec)
+
+MariaDB [te31450db]> desc fine;
++--------+---------+------+-----+---------+-------+
+| Field  | Type    | Null | Key | Default | Extra |
++--------+---------+------+-----+---------+-------+
+| RollNo | int(11) | YES  |     | NULL    |       |
+| Date   | date    | YES  |     | NULL    |       |
+| Amt    | int(11) | YES  |     | NULL    |       |
++--------+---------+------+-----+---------+-------+
+3 rows in set (0.003 sec)
+
+MariaDB [te31450db]> delimiter ??
+MariaDB [te31450db]> create procedure fine (in roll int , in doi date ) 
+begin 
+ declare r int; declare di date; declare dr date; declare amt int; declare fine int;
+ declare continue handler for NOT FOUND
+ select 'NOT FOUND'; 
+ set r = roll; set di = doi; 
+ select DOI into di from borrower where RollNo = r; 
+ set dr = 20220101;
+ set fine = di - dr; 
+ if fine >30 then  set amt = fine*50 ; 
+ else  set amt = fine*5; 
+ end if; 
+ insert into fine (RollNo , Date , Amt ) values (r, di , amt); 
+ end??
+ 
+ MariaDB [te31450db]> delimiter ;
+ MariaDB [te31450db]> call fine (31449 , 20220105);
+Query OK, 2 rows affected (0.029 sec)
+
+MariaDB [te31450db]> select * from fine ;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
++--------+------------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [te31450db]> select * from fine ;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
++--------+------------+-------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31450db]> call fine (31450 , 20220120);
+Query OK, 2 rows affected (0.026 sec)
+
+MariaDB [te31450db]> call fine (31451 , 20221212);
+Query OK, 2 rows affected (0.038 sec)
+
+MariaDB [te31450db]> select * from fine ;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
++--------+------------+-------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31450db]> create procedure submit (in roll int , in doi date ) 
+begin  
+declare r int; declare di date; declare dr date; declare amt int; declare fine int; declare flag varchar(20);   
+set r = roll; set di = doi; select DOI into di from borrower where RollNo = r; 
+set dr = 20220101; set fine = di - dr; if fine >30 then  set amt = fine*50 ; 
+else  set amt = fine*5; end if; 
+insert into fine (RollNo , Date , Amt ) values (r , di , amt); update borrower set  Status ='R'  where RollNo = r; 
+end ??
+Query OK, 0 rows affected (0.057 sec)
+
+MariaDB [te31450db]> delimiter ;
+MariaDB [te31450db]> call submit (31452 , 20220601);
+Query OK, 3 rows affected (0.158 sec)
+
+MariaDB [te31450db]> select * from borrower;
++--------+---------+------------+---------------+--------+
+| RollNo | Name    | DOI        | NameOfBook    | Status |
++--------+---------+------------+---------------+--------+
+|  31448 | Tanishq | 2022-12-12 | Wings of Fire | I      |
+|  31449 | Anikta  | 2020-06-01 | DBMS          | I      |
+|  31450 | NULL    | NULL       | TOI           | NULL   |
+|  31451 | NULL    | NULL       | SPOS          | NULL   |
+|  31452 | Chetan  | 2022-06-01 | TOC           | R      |
+|  31453 | Tejas   | 2022-04-02 | CNS           | I      |
++--------+---------+------------+---------------+--------+
+6 rows in set (0.001 sec)
+
+MariaDB [te31450db]> select * from fine;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
+|  31452 | 2022-06-01 | 25000 |
+|  31450 | 2022-06-01 | 25000 |
+|  31452 | 2022-06-01 | 25000 |
+|  31452 | 2022-06-01 | 25000 |
++--------+------------+-------+
+8 rows in set (0.001 sec)
+
+MariaDB [te31450db]> delete from fine where RollNo = 31452 ;
+Query OK, 3 rows affected (0.035 sec)
+
+MariaDB [te31450db]> select * from fine;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
+|  31450 | 2022-06-01 | 25000 |
++--------+------------+-------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31450db]> call submit (31452 , 20220601);
+Query OK, 2 rows affected (0.070 sec)
+
+MariaDB [te31450db]> select * from fine;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
+|  31450 | 2022-06-01 | 25000 |
+|  31452 | 2022-06-01 | 25000 |
++--------+------------+-------+
+6 rows in set (0.001 sec)
+
+MariaDB [te31450db]> call submit (31450 , 20220201);
+Query OK, 3 rows affected (0.179 sec)
+
+MariaDB [te31450db]> select * from fine;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
+|  31450 | 2022-06-01 | 25000 |
+|  31452 | 2022-06-01 | 25000 |
+|  31450 | 2022-02-01 |  5000 |
++--------+------------+-------+
+7 rows in set (0.001 sec)
+
+MariaDB [te31450db]> call submit (31451 , 20221212);
+Query OK, 3 rows affected (0.055 sec)
+
+MariaDB [te31450db]> select * from fine;
++--------+------------+-------+
+| RollNo | Date       | Amt   |
++--------+------------+-------+
+|  31449 | 2022-01-05 |    20 |
+|  31448 | 2022-05-05 | 20200 |
+|  31450 | 2022-01-20 |    95 |
+|  31451 | 2022-12-12 | 55550 |
+|  31450 | 2022-06-01 | 25000 |
+|  31452 | 2022-06-01 | 25000 |
+|  31450 | 2022-02-01 |  5000 |
+|  31451 | 2022-12-12 | 55550 |
++--------+------------+-------+
+8 rows in set (0.001 sec)
+
+MariaDB [te31450db]> select * from borrower;
++--------+---------+------------+---------------+--------+
+| RollNo | Name    | DOI        | NameOfBook    | Status |
++--------+---------+------------+---------------+--------+
+|  31448 | Tanishq | 2022-12-12 | Wings of Fire | I      |
+|  31449 | Anikta  | 2020-06-01 | DBMS          | I      |
+|  31450 | NULL    | NULL       | TOI           | R      |
+|  31451 | NULL    | NULL       | SPOS          | R      |
+|  31452 | Chetan  | 2022-06-01 | TOC           | R      |
+|  31453 | Tejas   | 2022-04-02 | CNS           | I      |
++--------+---------+------------+---------------+--------+
+6 rows in set (0.001 sec)
+
+ 
